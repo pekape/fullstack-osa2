@@ -5,11 +5,14 @@ const Otsikko = ({nimi}) => <h1>{nimi}</h1>
 
 const Osa = ({osa}) => <p>{osa.nimi} {osa.tehtavia}</p>
 
-const Sisalto = ({osat}) => (
-  <div>
-    {osat.map(osa => <Osa key={osa.nimi} osa={osa} />)}
-  </div>
-)
+const Sisalto = ({osat}) => {
+  const osatKomponentteina = osat.map(osa => <Osa key={osa.nimi} osa={osa} />)
+  return (
+    <div>
+      {osatKomponentteina}
+    </div>
+  )
+}
 
 const Kurssi = ({kurssi}) => (
   <div>
