@@ -15,9 +15,14 @@ class App extends React.Component {
 
   addContact = (event) => {
     event.preventDefault()
-    const newContact = {
-      name: this.state.newName
+    const name = this.state.newName
+
+    if (this.state.persons.map(person => person.name).includes(name)) {
+      alert('Henkilö on jo listalla')
+      return
     }
+
+    const newContact = { name }
     const persons = this.state.persons.concat(newContact)
     this.setState({
       persons,
