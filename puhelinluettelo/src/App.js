@@ -1,4 +1,8 @@
 import React from 'react';
+import Contact from './components/Contact'
+import AddContact from './components/AddContact'
+import SearchForm from './components/SearchForm'
+import Contacts from './components/Contacts'
 
 class App extends React.Component {
   constructor(props) {
@@ -38,57 +42,43 @@ class App extends React.Component {
     })
   }
 
-  render() {
+  filterContacts = () => {
+    const search = this.state.filter
+
     const contacts = this.state.persons
     .filter(person =>
-      person.name.toLowerCase().includes(this.state.filter.toLowerCase())
-      || person.number.includes(this.state.filter)
+      person.name.toLowerCase().includes(search.toLowerCase())
+      || person.number.includes(search)
     ).map(person =>
-      <tr key={person.name}>
-        <td>{person.name}</td>
-        <td>{person.number}</td>
-      </tr>)
-
-    return (
-      <div>
-        <h1>Puhelinluettelo</h1>
-
-        rajaa näytettäviä <input value={this.state.filter}
-                                 onChange={this.filterChange}/>
-
-       <h3>Lisää uusi</h3>
-
-        <form onSubmit={this.addContact}>
-          <div>
-            nimi: <input value={this.state.newName}
-                         onChange={this.nameChange} />
-          </div>
-          <div>
-            numero: <input value={this.state.newNumber}
-                           onChange={this.numberChange} />
-          </div>
-          <div>
-            <button type="submit">lisää</button>
-          </div>
-        </form>
-
-        <h3>Numerot</h3>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Nimi</th>
-              <th>Numero</th>
-            </tr>
-          </thead>
-          <tbody>
-            {contacts}
-          </tbody>
-        </table>
-
-      </div>
+      <Contact key={person.name} person={person} />
     )
+
+    return contacts
   }
+
+  render = () => (
+    <div>
+      <h1>Puhelinluettelo</h1>
+
+      <SearchForm
+        filter={this.state.filter}
+        handler={this.filterChange}
+      />
+
+      <h3>Lisää uusi</h3>
+
+      <AddContact
+        addContact={this.addContact}
+        name={this.state.newName} nameChange={this.nameChange}
+        number={this.state.newNumber} numberChange={this.numberChange}
+      />
+
+      <h3>Numerot</h3>
+
+      <Contacts contacts={this.filterContacts()} />
+
+    </div>
+  )
 }
 
 export default App
