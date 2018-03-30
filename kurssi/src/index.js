@@ -15,7 +15,10 @@ const Sisalto = ({osat}) => {
 }
 
 const Yhteensa = ({osat}) => {
-  const tehtaviaYht = osat.reduce((summa, osa) => summa + osa.tehtavia, 0)
+  const tehtaviaYht =
+    osat.map(osa => osa.tehtavia)
+        .reduce((summa, n) => summa + n)
+
   return (
     <p>
       yhteensä {tehtaviaYht} tehtävää
