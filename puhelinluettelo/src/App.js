@@ -5,13 +5,17 @@ class App extends React.Component {
     super(props)
     this.state = {
       persons: [
-        { name: 'Arto Hellas' },
-        { name: 'arto asdfdasf' },
-        { name: 'asdf zczzxczxc' }
+        { name: 'Arto Hellas', number: '040-123456' },
+        { name: 'arto asdfdasf', number: '040-123456' },
+        { name: 'asdf zczzxczxc', number: '040-123456' }
       ],
-      newName: ''
+      newName: '',
+      newNumber: ''
     }
   }
+
+  nameChange = (event) => this.setState({newName: event.target.value})
+  numberChange = (event) => this.setState({newNumber: event.target.value})
 
   addContact = (event) => {
     event.preventDefault()
@@ -22,35 +26,55 @@ class App extends React.Component {
       return
     }
 
-    const newContact = { name }
+    const number = this.state.newNumber
+    const newContact = { name, number }
     const persons = this.state.persons.concat(newContact)
     this.setState({
       persons,
-      newName: ''
+      newName: '',
+      newNumber: ''
     })
   }
 
-  nameChange = (event) => this.setState({newName: event.target.value})
-
   render() {
-    const nimet = this.state.persons
-      .map(person => <li key={person.name}>{person.name}</li>)
+    const contacts = this.state.persons.map(person =>
+        <tr key={person.name}>
+          <td>{person.name}</td>
+          <td>{person.number}</td>
+        </tr>)
 
     return (
       <div>
         <h2>Puhelinluettelo</h2>
+
         <form onSubmit={this.addContact}>
           <div>
-            nimi: <input value={this.state.newName} onChange={this.nameChange}/>
+            nimi: <input value={this.state.newName}
+                         onChange={this.nameChange} />
+          </div>
+          <div>
+            numero: <input value={this.state.newNumber}
+                           onChange={this.numberChange} />
           </div>
           <div>
             <button type="submit">lisää</button>
           </div>
         </form>
+
         <h2>Numerot</h2>
-        <ul>
-          {nimet}
-        </ul>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Nimi</th>
+              <th>Numero</th>
+            </tr>
+          </thead>
+          <tbody>
+            {contacts}
+          </tbody>
+        </table>
+
       </div>
     )
   }
