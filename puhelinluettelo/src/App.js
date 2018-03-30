@@ -6,16 +6,18 @@ class App extends React.Component {
     this.state = {
       persons: [
         { name: 'Arto Hellas', number: '040-123456' },
-        { name: 'arto asdfdasf', number: '040-123456' },
-        { name: 'asdf zczzxczxc', number: '040-123456' }
+        { name: 'arto asdfdasf', number: '050-123456' },
+        { name: 'asdf zczzxczxc', number: '040-123050' }
       ],
       newName: '',
-      newNumber: ''
+      newNumber: '',
+      filter: ''
     }
   }
 
   nameChange = (event) => this.setState({newName: event.target.value})
   numberChange = (event) => this.setState({newNumber: event.target.value})
+  filterChange = (event) => this.setState({filter: event.target.value})
 
   addContact = (event) => {
     event.preventDefault()
@@ -37,15 +39,24 @@ class App extends React.Component {
   }
 
   render() {
-    const contacts = this.state.persons.map(person =>
-        <tr key={person.name}>
-          <td>{person.name}</td>
-          <td>{person.number}</td>
-        </tr>)
+    const contacts = this.state.persons
+    .filter(person =>
+      person.name.toLowerCase().includes(this.state.filter.toLowerCase())
+      || person.number.includes(this.state.filter)
+    ).map(person =>
+      <tr key={person.name}>
+        <td>{person.name}</td>
+        <td>{person.number}</td>
+      </tr>)
 
     return (
       <div>
-        <h2>Puhelinluettelo</h2>
+        <h1>Puhelinluettelo</h1>
+
+        rajaa näytettäviä <input value={this.state.filter}
+                                 onChange={this.filterChange}/>
+
+       <h3>Lisää uusi</h3>
 
         <form onSubmit={this.addContact}>
           <div>
@@ -61,7 +72,7 @@ class App extends React.Component {
           </div>
         </form>
 
-        <h2>Numerot</h2>
+        <h3>Numerot</h3>
 
         <table>
           <thead>
