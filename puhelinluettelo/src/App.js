@@ -1,22 +1,28 @@
 import React from 'react';
+import axios from 'axios'
+import Contacts from './components/Contacts'
 import Contact from './components/Contact'
 import AddContact from './components/AddContact'
 import SearchForm from './components/SearchForm'
-import Contacts from './components/Contacts'
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      persons: [
-        { name: 'Arto Hellas', number: '040-123456' },
-        { name: 'arto asdfdasf', number: '050-123456' },
-        { name: 'asdf zczzxczxc', number: '040-123050' }
-      ],
+      persons: [],
       newName: '',
       newNumber: '',
       filter: ''
     }
+  }
+
+  componentWillMount() {
+    const promise = axios.get('http://localhost:3001/persons')
+    const eventHandler = (response =>
+      this.setState({
+        persons: response.data
+      }))
+    promise.then(eventHandler)
   }
 
   nameChange = (event) => this.setState({newName: event.target.value})
