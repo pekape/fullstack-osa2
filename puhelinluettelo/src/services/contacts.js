@@ -9,4 +9,6 @@ const create = (newContact) =>
     .post(baseUrl, newContact)
     .then(response => response.data)
 
-export default { getAll, create }
+const deleteContact = (id) => axios.delete(`${baseUrl}/${id}`)
+
+export default { getAll, create, deleteContact }

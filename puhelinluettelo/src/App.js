@@ -24,6 +24,10 @@ class App extends React.Component {
       .then(persons => {
         this.setState({ persons })
       })
+      .catch(error => {
+        console.log(error)
+        alert("virhe tietojen haussa")
+      })
   }
 
   nameChange = (event) => this.setState({newName: event.target.value})
@@ -51,6 +55,23 @@ class App extends React.Component {
           newNumber: ''
         })
       })
+      .catch(error => {
+        console.log(error)
+        alert("virhe lisäyksessä")
+      })
+  }
+
+  deleteContact = (person) => () => {
+    if (window.confirm(`Poistetaanko ${person.name}`))
+    contactService
+      .deleteContact(person.id)
+      .then(this.setState({
+        persons: this.state.persons.filter(p => p.id !== person.id)
+      }))
+      .catch(error => {
+        console.log(error)
+        alert("virhe poistossa")
+      })
   }
 
   filterContacts = () => {
@@ -61,7 +82,8 @@ class App extends React.Component {
       person.name.toLowerCase().includes(search.toLowerCase())
       || person.number.includes(search)
     ).map(person =>
-      <Contact key={person.name} person={person} />
+      <Contact key={person.id} person={person}
+        deleteContact={this.deleteContact(person)} />
     )
 
     return contacts
