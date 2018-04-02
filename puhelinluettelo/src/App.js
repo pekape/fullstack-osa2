@@ -37,14 +37,30 @@ class App extends React.Component {
   addContact = (event) => {
     event.preventDefault()
     const name = this.state.newName
-
-    if (this.state.persons.map(person => person.name).includes(name)) {
-      alert('Henkilö on jo listalla')
-      return
-    }
-
     const number = this.state.newNumber
     const newContact = { name, number }
+
+    const found = this.state.persons.find(p => p.name === name)
+
+    if (found) {
+      if (window.confirm(`${name} on jo listalla, korvataanko numero?`)) {
+        contactService
+        .update(found.id, newContact)
+        .then(updatedContact => {
+          this.setState({
+            persons: this.state.persons.map(p =>
+              p.id !== updatedContact.id ? p : updatedContact),
+              newName: '',
+              newNumber: ''
+          })
+        })
+        .catch(error => {
+          console.log(error)
+          alert("virhe numeron päivityksessä")
+        })
+      }
+      return
+    }
 
     contactService
       .create(newContact)
