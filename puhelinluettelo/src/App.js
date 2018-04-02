@@ -1,5 +1,7 @@
 import React from 'react';
-import axios from 'axios'
+
+import contactService from './services/contacts'
+
 import Contacts from './components/Contacts'
 import Contact from './components/Contact'
 import AddContact from './components/AddContact'
@@ -17,12 +19,11 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    const promise = axios.get('http://localhost:3001/persons')
-    const eventHandler = (response =>
-      this.setState({
-        persons: response.data
-      }))
-    promise.then(eventHandler)
+    contactService
+      .getAll()
+      .then(persons => {
+        this.setState({ persons })
+      })
   }
 
   nameChange = (event) => this.setState({newName: event.target.value})
@@ -40,12 +41,16 @@ class App extends React.Component {
 
     const number = this.state.newNumber
     const newContact = { name, number }
-    const persons = this.state.persons.concat(newContact)
-    this.setState({
-      persons,
-      newName: '',
-      newNumber: ''
-    })
+
+    contactService
+      .create(newContact)
+      .then(newContact => {
+        this.setState({
+          persons: this.state.persons.concat(newContact),
+          newName: '',
+          newNumber: ''
+        })
+      })
   }
 
   filterContacts = () => {
