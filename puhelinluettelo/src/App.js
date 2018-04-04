@@ -34,13 +34,13 @@ class App extends React.Component {
   }
 
   resetMessage = () =>
-    setTimeout(() => this.setState({ error: null, success: null }), 3000)
+    setTimeout(() => this.setState({ error: null, success: null }), 2900)
 
-  nameChange = (event) => this.setState({newName: event.target.value})
-  numberChange = (event) => this.setState({newNumber: event.target.value})
-  filterChange = (event) => this.setState({filter: event.target.value})
+  nameChange = event => this.setState({newName: event.target.value})
+  numberChange = event => this.setState({newNumber: event.target.value})
+  filterChange = event => this.setState({filter: event.target.value})
 
-  addContact = (event) => {
+  addContact = event => {
     event.preventDefault()
     const name = this.state.newName
     const number = this.state.newNumber
@@ -61,13 +61,20 @@ class App extends React.Component {
               success: `henkilön ${name} numero päivitetty`
           })
         })
-        .catch(error => this.setState({ error: 'numeron päivitys epäonnistui' }))
+        .catch(error => {
+          this.setState({ persons: this.state.persons.filter(p => p.id !== found.id) })
+          if (window.confirm(`${name} on poistettu palvelimelta, lisätäänkö tiedot?`))
+            this.addNewContact(newContact)
+        })
       }
-
       this.resetMessage()
       return
     }
 
+    this.addNewContact(newContact)
+  }
+
+  addNewContact = newContact => {
     contactService
       .create(newContact)
       .then(newContact => {
@@ -75,15 +82,15 @@ class App extends React.Component {
           persons: this.state.persons.concat(newContact),
           newName: '',
           newNumber: '',
-          success: `lisättiin ${name}`
+          success: `lisättiin ${newContact.name}`
         })
       })
       .catch(error => this.setState({ error: 'virhe lisäyksessä' }))
 
-      this.resetMessage()
+    this.resetMessage()
   }
 
-  deleteContact = (person) => () => {
+  deleteContact = person => () => {
     if (window.confirm(`Poistetaanko ${person.name}`))
     contactService
       .deleteContact(person.id)
@@ -124,7 +131,7 @@ class App extends React.Component {
         handler={this.filterChange}
       />
 
-      <h3>Lisää uusi</h3>
+      <h3>Lisää uusi / päivitä</h3>
 
       <AddContact
         addContact={this.addContact}
