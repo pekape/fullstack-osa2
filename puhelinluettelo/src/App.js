@@ -6,6 +6,7 @@ import Contacts from './components/Contacts'
 import Contact from './components/Contact'
 import AddContact from './components/AddContact'
 import SearchForm from './components/SearchForm'
+import Notification from './components/Notification'
 
 class App extends React.Component {
   constructor(props) {
@@ -14,7 +15,9 @@ class App extends React.Component {
       persons: [],
       newName: '',
       newNumber: '',
-      filter: ''
+      filter: '',
+      success: null,
+      error: null
     }
   }
 
@@ -29,6 +32,9 @@ class App extends React.Component {
         alert("virhe tietojen haussa")
       })
   }
+
+  resetMessage = () =>
+    setTimeout(() => this.setState({ error: null, success: null }), 3000)
 
   nameChange = (event) => this.setState({newName: event.target.value})
   numberChange = (event) => this.setState({newNumber: event.target.value})
@@ -51,14 +57,14 @@ class App extends React.Component {
             persons: this.state.persons.map(p =>
               p.id !== updatedContact.id ? p : updatedContact),
               newName: '',
-              newNumber: ''
+              newNumber: '',
+              success: `henkilön ${name} numero päivitetty`
           })
         })
-        .catch(error => {
-          console.log(error)
-          alert("virhe numeron päivityksessä")
-        })
+        .catch(error => this.setState({ error: 'numeron päivitys epäonnistui' }))
       }
+
+      this.resetMessage()
       return
     }
 
@@ -68,13 +74,13 @@ class App extends React.Component {
         this.setState({
           persons: this.state.persons.concat(newContact),
           newName: '',
-          newNumber: ''
+          newNumber: '',
+          success: `lisättiin ${name}`
         })
       })
-      .catch(error => {
-        console.log(error)
-        alert("virhe lisäyksessä")
-      })
+      .catch(error => this.setState({ error: 'virhe lisäyksessä' }))
+
+      this.resetMessage()
   }
 
   deleteContact = (person) => () => {
@@ -82,12 +88,12 @@ class App extends React.Component {
     contactService
       .deleteContact(person.id)
       .then(this.setState({
-        persons: this.state.persons.filter(p => p.id !== person.id)
+        persons: this.state.persons.filter(p => p.id !== person.id),
+        success: `${person.name} poistettiin`
       }))
-      .catch(error => {
-        console.log(error)
-        alert("virhe poistossa")
-      })
+      .catch(error => this.setState({ error: 'virhe poistossa' }))
+
+      this.resetMessage()
   }
 
   filterContacts = () => {
@@ -108,6 +114,10 @@ class App extends React.Component {
   render = () => (
     <div>
       <h1>Puhelinluettelo</h1>
+
+        { this.state.error ?
+          <Notification type="error" message={this.state.error} /> :
+          <Notification type="success" message={this.state.success} />}
 
       <SearchForm
         filter={this.state.filter}
